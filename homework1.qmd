@@ -88,12 +88,30 @@ flights %>%
 ```{r}
 #| label: problem-2
 
-cancelled_flights <- flights %>% 
-  filter(is.na(dep_time)) 
+  
+q2 <- flights %>%
+  # total flights that month
+  add_count(month, name = "total_flights") %>% 
+  
+  # filter to only cancelled flights
+  filter(is.na(dep_time)) %>% 
+  
+  # cancelled flights that month
+  add_count(month, name = "cancelled_flights") %>% 
+  
+  # calculate proportion cancelled
+  mutate(prop_cancelled = cancelled_flights / total_flights) %>%
+  
+  # need to learn a better way to return a repeat variable
+  group_by(month) %>%
+  summarise(prop_cancelled = mean(prop_cancelled)) %>%
+  arrange(prop_cancelled)
+  
+view(q2)
 
-# What months had the highest and lowest % of cancelled flights?
-
-
+  # I wish I could figure out how to return just the highest and lowest values rather than the df but the answer is lowest proportion in October and highest in February. The fall (August - November) seems to be the least likely for cancellation but I don't see much seasonality otherwise.
+  
+  
 ```
 
 ## Problem 3: What plane (specified by the `tailnum` variable) traveled the most times from New York City airports in 2013? Please `left_join()` the resulting table with the table `planes` (also included in the `nycflights13` package).
@@ -107,10 +125,16 @@ view(flights)
 
 # find the right plane 
 q3 <- flights %>%
-  count(tailnum) %>% # this returns 'n' variable for number of flights by plane
+  
+  # this returns 'n' variable for number of flights by plane
+  count(tailnum, name = "num_flights") %>% 
+  
+  # joining in order to filter by plane size
   left_join(planes, by = join_by(tailnum)) %>%
   filter(seats > 50) %>%
-  slice(which.max(n)) # tells you which plane had the most flights and saves that
+  
+  # tells you which plane had the most flights and saves that
+  slice(which.max(num_flights)) 
 
 # go back to the original table to find the other flights for that plane
 flights %>%
@@ -147,11 +171,23 @@ q5.1 <- planes %>%
 # 70 planes
 
 q5.2 <- planes %>%
+  
+  # n = number of planes from each manufacturer
   add_count(manufacturer) %>% 
+  
+  # really need to find a better way to return a repeat variable
   group_by(manufacturer) %>%
   summarise(models = mean(n)) %>%
+  
+  # select top five manufacturers based on models
   arrange(desc(models)) %>%
-  top_n(models,n=5)
+  top_n(models,n=5) %>%
+  print(q5.2)
+
+
+
+
+rm(list = ls())
 ```
 
 ## Problem 6: Use the `flights` and `planes` tables to answer the following questions:
@@ -294,7 +330,7 @@ The age gaps dataset includes "gender" columns, which always contain the values 
 The following is a data dictionary of the variables used
 
 | variable            | class     | description                                                                                             |
-|:--------------------|:----------|:--------------------------------------------------------------------------------------------------------|
+|:-----------|:-----------|:-----------------------------------------------|
 | movie_name          | character | Name of the film                                                                                        |
 | release_year        | integer   | Release year                                                                                            |
 | director            | character | Director of the film                                                                                    |
