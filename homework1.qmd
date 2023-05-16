@@ -106,12 +106,12 @@ q2 <- flights %>%
   group_by(month) %>%
   summarise(prop_cancelled = mean(prop_cancelled)) %>%
   arrange(prop_cancelled)
-  
-view(q2)
+
+  view(q2)
 
   # I wish I could figure out how to return just the highest and lowest values rather than the df but the answer is lowest proportion in October and highest in February. The fall (August - November) seems to be the least likely for cancellation but I don't see much seasonality otherwise.
   
-  
+rm(list = ls())
 ```
 
 ## Problem 3: What plane (specified by the `tailnum` variable) traveled the most times from New York City airports in 2013? Please `left_join()` the resulting table with the table `planes` (also included in the `nycflights13` package).
@@ -125,7 +125,6 @@ view(flights)
 
 # find the right plane 
 q3 <- flights %>%
-  
   # this returns 'n' variable for number of flights by plane
   count(tailnum, name = "num_flights") %>% 
   
@@ -153,7 +152,33 @@ rm(list = ls())
 
 ```{r}
 
+view(weather)
 
+# distribution of temperature in July
+q4.1 <- weather %>%
+  filter(month == 7) %>%
+  filter(!is.na(wind_speed)) %>%
+  # I can't think of a better way to identify outliers that will be nice to visualise
+  # I don't feel that there are any significant wind speed outliers for July anyway
+  mutate(wind_speed_bin = cut(wind_speed, 3)) %>%
+  # plot temperature by date and color by wind speed bins
+  ggplot(aes(x = day, y = temp, color = wind_speed_bin)) +
+  geom_point() +
+  scale_color_manual(name = "Wind Speed", labels = c("Low", "Medium", "High"),
+                     values = c("gray70","gray40","red"))
+q4.1
+
+q4.2 <- weather %>%
+  ggplot(aes(x = dewp, y = humid)) +
+  geom_point(na.rm = TRUE, color = "gray50", alpha = 0.1) +
+  geom_smooth(method = lm, na.rm = TRUE) 
+q4.2
+
+q4.3 <- weather %>%
+  ggplot(aes(y = precip, x = visib)) +
+  geom_point(na.rm = TRUE, color = "gray50", alpha = 0.5) +
+  geom_smooth(method = lm, na.rm = TRUE) 
+q4.3
 ```
 
 ## Problem 5: Use the `flights` and `planes` tables to answer the following questions:
@@ -171,7 +196,6 @@ q5.1 <- planes %>%
 # 70 planes
 
 q5.2 <- planes %>%
-  
   # n = number of planes from each manufacturer
   add_count(manufacturer) %>% 
   
@@ -183,8 +207,6 @@ q5.2 <- planes %>%
   arrange(desc(models)) %>%
   top_n(models,n=5) %>%
   print(q5.2)
-
-
 
 
 rm(list = ls())
