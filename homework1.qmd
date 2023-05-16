@@ -179,6 +179,8 @@ q4.3 <- weather %>%
   geom_point(na.rm = TRUE, color = "gray50", alpha = 0.5) +
   geom_smooth(method = lm, na.rm = TRUE) 
 q4.3
+
+rm(list = ls())
 ```
 
 ## Problem 5: Use the `flights` and `planes` tables to answer the following questions:
@@ -191,6 +193,8 @@ q4.3
 
 ```{r}
 
+view(planes)
+
 q5.1 <- planes %>%
   count(is.na(year)) 
 # 70 planes
@@ -198,16 +202,32 @@ q5.1 <- planes %>%
 q5.2 <- planes %>%
   # n = number of planes from each manufacturer
   add_count(manufacturer) %>% 
-  
   # really need to find a better way to return a repeat variable
   group_by(manufacturer) %>%
   summarise(models = mean(n)) %>%
-  
   # select top five manufacturers based on models
   arrange(desc(models)) %>%
   top_n(models,n=5) %>%
   print(q5.2)
 
+
+q5.3 <- planes %>%
+  # find total plane counts to filter out smaller manufacturers
+  add_count(manufacturer, name = "tot_plane_count") %>%
+  # collapse smaller vendors into 'OTHER' and Airbus into one bucket
+  mutate(man_summary = case_when(tot_plane_count <200 ~ "OTHER",
+                                 grepl('AIRBUS*', manufacturer) ~ "AIRBUS",
+                           .default = manufacturer)) %>%
+  # find number of planes by year
+  group_by(year, man_summary) %>%
+  summarise(plane_count = n()) %>%
+  # make a graph
+  ggplot(aes(x = year, y = plane_count, fill = man_summary)) +
+  geom_area(color = "black", size = 0.1, alpha = 0.5) +
+  scale_fill_brewer(palette = "GnBu") +
+  # filtering to last 40 years for aesthetics
+  xlim(1973,2013)
+q5.3
 
 rm(list = ls())
 ```
