@@ -275,14 +275,18 @@ rm(list=ls())
 view(airlines)
 
 fly_into_sfo <- flights %>%
-  left_join(airlines, by = join_by(carrier)) %>% # get carrier names
-  add_count(carrier) %>% # n = total flights by that carrier
+  # get carrier names
+  left_join(airlines, by = join_by(carrier)) %>% 
+  # total number of flights for each carrier
+  add_count(carrier, name = "total_flights") %>% 
+  # now filter by SFO and count flights
   filter(dest == "SFO") %>%
-  add_count(carrier) %>% # nn = SFO flights
-  mutate(percent_sfo = nn/n *100) %>%
+  add_count(carrier, name = "sfo_flights") %>% 
+  # calculate percent sfo
+  mutate(percent_sfo = sfo_flights/total_flights *100) %>%
   group_by(name) %>%
-  summarise(count = mean(nn),percent = mean(percent_sfo)) # I don't know how to group by multiple variables, this was easier
-
+  # really need to figure out how to just return the shared variable
+  summarise(count = mean(sfo_flights),percent = mean(percent_sfo)) 
 
 ```
 
@@ -338,7 +342,7 @@ fly_into_sfo %>%
   # you never end up with a hanging `+` that awaits another ggplot layer
   NULL
  
- 
+ rm(list = ls())
 ```
 
 ## Problem 9: Let's take a look at cancellations of flights to SFO. We create a new dataframe `cancellations` as follows
@@ -357,6 +361,8 @@ cancellations <- flights %>%
 
 I want you to think how we would organise our data manipulation to create the following plot. No need to write the code, just explain in words how you would go about it.
 
+| 
+
 ![](images/sfo-cancellations.png)
 
 ## Problem 10: On your own -- Hollywood Age Gap
@@ -372,7 +378,7 @@ The age gaps dataset includes "gender" columns, which always contain the values 
 The following is a data dictionary of the variables used
 
 | variable            | class     | description                                                                                             |
-|:-----------|:-----------|:-----------------------------------------------|
+|:--------------------|:----------|:--------------------------------------------------------------------------------------------------------|
 | movie_name          | character | Name of the film                                                                                        |
 | release_year        | integer   | Release year                                                                                            |
 | director            | character | Director of the film                                                                                    |
@@ -391,7 +397,23 @@ The following is a data dictionary of the variables used
 
 age_gaps <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-14/age_gaps.csv')
 
+age_gaps %>%
+  ggplot(aes(x = release_year, y = age_difference, color = character_2_gender)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = lm)
 
+# I am a bit surprised that there isn't more correlation between release year and age_diff
+# I am not surprised that female characters are more likely to be younger
+
+# now let's check the half plus seven rule
+halfrule <- age_gaps %>%
+  mutate(minage = ((actor_1_age / 2) + 7),
+         maxage = ((actor_1_age - 7) * 2),
+         acceptable = ifelse(actor_2_age > minage, TRUE, FALSE)) %>%
+  ggplot(aes(x = character_1_gender, y = actor_1_age, color = acceptable)) +
+  geom_boxplot()
+halfrule
+# 
 ```
 
 How would you explore this data set? Here are some ideas of tables/ graphs to help you with your analysis
@@ -420,6 +442,8 @@ There is a lot of explanatory text, comments, etc. You do not need these, so del
 **Please seek out help when you need it,** and remember the [15-minute rule](https://mam2022.netlify.app/syllabus/#the-15-minute-rule){target="_blank"}. You know enough R (and have enough examples of code from class and your readings) to be able to do this. If you get stuck, ask for help from others, post a question on Slack-- and remember that I am here to help too!
 
 > As a true test to yourself, do you understand the code you submitted and are you able to explain it to someone else?
+>
+> *Not entirely, but that's true of every piece of code I've written. But for the most part, I do believe I can replicate it.*
 
 # Rubric
 
