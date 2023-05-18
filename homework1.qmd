@@ -265,6 +265,15 @@ rm(list=ls())
 ```
 
 ```{r}
+view(flights)
+
+q7 <- flights %>%
+  group_by(month) %>%
+  summarise(med_arr_delay = median(!is.na(arr_delay)))
+  
+ggplot(flights, aes(x = as.factor(month), y = arr_delay, color = origin)) +
+  geom_boxplot() +
+  facet_wrap(~as.factor(month), scale = "free")
 
 ```
 
@@ -378,7 +387,7 @@ The age gaps dataset includes "gender" columns, which always contain the values 
 The following is a data dictionary of the variables used
 
 | variable            | class     | description                                                                                             |
-|:--------------------|:----------|:--------------------------------------------------------------------------------------------------------|
+|:--------------|:--------------|:------------------------------------------|
 | movie_name          | character | Name of the film                                                                                        |
 | release_year        | integer   | Release year                                                                                            |
 | director            | character | Director of the film                                                                                    |
