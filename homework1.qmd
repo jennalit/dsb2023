@@ -43,36 +43,28 @@ skim(flights)
 #| label: problem-1
 
 # Had an arrival delay of two or more hours (> 120 minutes)
-
-q1.1 <- flights %>%
+flights %>%
   filter(arr_delay > 120)
 
 # Flew to Houston (IAH or HOU)
-
-q1.2 <- flights %>%
+flights %>%
   filter(dest == "IAH" | dest == "HOU")
 
 # Were operated by United (`UA`), American (`AA`), or Delta (`DL`)
-
-q1.3 <- flights %>%
+flights %>%
   filter(carrier %in% c("UA","AA","DL"))
 
 # Departed in summer (July, August, and September)
-  
-q1.4 <- flights %>%
+flights %>%
   filter(between(month,7,9))
   
 # Arrived more than two hours late, but didn't leave late
-
-q1.5 <- flights %>%
+flights %>%
   filter(arr_delay > 120 & dep_delay < 0)
 
 # Were delayed by at least an hour, but made up over 30 minutes in flight
-
-q1.6 <- flights %>%
+flights %>%
   filter(dep_delay > 60 & (dep_delay - arr_delay) > 30)
-
-rm(list = ls())
 
 ```
 
@@ -89,29 +81,23 @@ flights %>%
 #| label: problem-2
 
   
-q2 <- flights %>%
+flights %>%
   # total flights that month
   add_count(month, name = "total_flights") %>% 
-  
   # filter to only cancelled flights
   filter(is.na(dep_time)) %>% 
-  
   # cancelled flights that month
   add_count(month, name = "cancelled_flights") %>% 
-  
   # calculate proportion cancelled
   mutate(prop_cancelled = cancelled_flights / total_flights) %>%
-  
-  # need to learn a better way to return a repeat variable
-  group_by(month) %>%
-  summarise(prop_cancelled = mean(prop_cancelled)) %>%
+  # return just the month and proportion
+  group_by(month, prop_cancelled) %>%
+  summarise() %>%
+  # sort by proportion
   arrange(prop_cancelled)
 
-  view(q2)
-
-  # I wish I could figure out how to return just the highest and lowest values rather than the df but the answer is lowest proportion in October and highest in February. The fall (August - November) seems to be the least likely for cancellation but I don't see much seasonality otherwise.
+  # Lowest proportion in October and highest in February. The fall (August - November) seems to be the least likely for cancellation but I don't see much seasonality otherwise.
   
-rm(list = ls())
 ```
 
 ## Problem 3: What plane (specified by the `tailnum` variable) traveled the most times from New York City airports in 2013? Please `left_join()` the resulting table with the table `planes` (also included in the `nycflights13` package).
@@ -119,27 +105,24 @@ rm(list = ls())
 For the plane with the greatest number of flights and that had more than 50 seats, please create a table where it flew to during 2013.
 
 ```{r}
-skim(planes)
 view(planes)
 view(flights)
 
 # find the right plane 
-q3 <- flights %>%
+x <- flights %>%
   # this returns 'n' variable for number of flights by plane
   count(tailnum, name = "num_flights") %>% 
-  
   # joining in order to filter by plane size
   left_join(planes, by = join_by(tailnum)) %>%
   filter(seats > 50) %>%
-  
   # tells you which plane had the most flights and saves that
   slice(which.max(num_flights)) 
 
 # go back to the original table to find the other flights for that plane
 flights %>%
-  filter(tailnum == q3$tailnum)
+  filter(tailnum == x$tailnum)
   
-rm(list = ls())
+rm(x)
 ```
 
 ## Problem 4: The `nycflights13` package includes a table (`weather`) that describes the weather during 2013. Use that table to answer the following questions:
@@ -155,7 +138,7 @@ rm(list = ls())
 view(weather)
 
 # distribution of temperature in July
-q4.1 <- weather %>%
+weather %>%
   filter(month == 7) %>%
   filter(!is.na(wind_speed)) %>%
   # I can't think of a better way to identify outliers that will be nice to visualise
@@ -166,21 +149,19 @@ q4.1 <- weather %>%
   geom_point() +
   scale_color_manual(name = "Wind Speed", labels = c("Low", "Medium", "High"),
                      values = c("gray70","gray40","red"))
-q4.1
 
-q4.2 <- weather %>%
+# relationship between dewpoint and humidity
+weather %>%
   ggplot(aes(x = dewp, y = humid)) +
   geom_point(na.rm = TRUE, color = "gray50", alpha = 0.1) +
   geom_smooth(method = lm, na.rm = TRUE) 
-q4.2
 
-q4.3 <- weather %>%
+# relationship between precipitation and visibility
+weather %>%
   ggplot(aes(y = precip, x = visib)) +
   geom_point(na.rm = TRUE, color = "gray50", alpha = 0.5) +
   geom_smooth(method = lm, na.rm = TRUE) 
-q4.3
 
-rm(list = ls())
 ```
 
 ## Problem 5: Use the `flights` and `planes` tables to answer the following questions:
@@ -195,23 +176,20 @@ rm(list = ls())
 
 view(planes)
 
-q5.1 <- planes %>%
+planes %>%
   count(is.na(year)) 
 # 70 planes
 
-q5.2 <- planes %>%
-  # n = number of planes from each manufacturer
-  add_count(manufacturer) %>% 
-  # really need to find a better way to return a repeat variable
-  group_by(manufacturer) %>%
-  summarise(models = mean(n)) %>%
+planes %>%
+  # models = number of planes from each manufacturer
+  add_count(manufacturer, name = "models") %>% 
+  group_by(manufacturer, models) %>%
+  summarise() %>%
   # select top five manufacturers based on models
   arrange(desc(models)) %>%
-  top_n(models,n=5) %>%
-  print(q5.2)
+  top_n(models,n=5)
 
-
-q5.3 <- planes %>%
+planes %>%
   # find total plane counts to filter out smaller manufacturers
   add_count(manufacturer, name = "tot_plane_count") %>%
   # collapse smaller vendors into 'OTHER' and Airbus into one bucket
@@ -227,9 +205,7 @@ q5.3 <- planes %>%
   scale_fill_brewer(palette = "GnBu") +
   # filtering to last 40 years for aesthetics
   xlim(1973,2013)
-q5.3
 
-rm(list = ls())
 ```
 
 ## Problem 6: Use the `flights` and `planes` tables to answer the following questions:
@@ -241,19 +217,21 @@ rm(list = ls())
 
 ```{r}
 
-q6.1 <- flights %>%
-  left_join(planes, by = join_by(tailnum))%>% # join the data with plane ages
-  slice(which.min(year.y)) # select only the oldest 
-                           # (noting that there are two 'year' variables now)
+flights %>%
+  # join the data with plane ages
+  left_join(planes, by = join_by(tailnum))%>% 
+  # select only the oldest (noting that there are two 'year' variables now)
+  slice(which.min(year.y)) 
 # tailnum = N381AA
 
-q6.2 <- inner_join(flights,planes,by = join_by(tailnum)) %>% # inner join to find shared 
-  group_by(tailnum) %>% # find unique ids
-  summarise() %>% # rm unnecessary columns
-  count() # self explanatory
+# inner join to find shared 
+inner_join(flights,planes,by = join_by(tailnum)) %>%
+  # find unique ids
+  group_by(tailnum) %>% 
+  summarise() %>% 
+  count()
 # 3322 planes
 
-rm(list=ls())
 
 ```
 
@@ -267,13 +245,42 @@ rm(list=ls())
 ```{r}
 view(flights)
 
-q7 <- flights %>%
+flights %>%
   group_by(month) %>%
-  summarise(med_arr_delay = median(!is.na(arr_delay)))
-  
-ggplot(flights, aes(x = as.factor(month), y = arr_delay, color = origin)) +
-  geom_boxplot() +
-  facet_wrap(~as.factor(month), scale = "free")
+  summarise(med_arr_delay = median(arr_delay, na.rm = TRUE))
+
+
+# just getting a visual of where the bulk of data points lie to set y scale reasonably
+ggplot(flights, aes(x = arr_delay)) +
+  geom_histogram()
+
+# misinterpreted the question but leaving it anyway
+flights %>%
+  ggplot(aes(x = as.factor(month), y = arr_delay, color = origin)) +
+    geom_boxplot(outlier.shape = NA) +
+    scale_y_continuous(limits = c(-100, 100)) 
+
+# carrier median arrival delay by month and origin 
+flights %>%
+  group_by(carrier, month, origin) %>%
+  summarise(med_arr_delay = median(arr_delay, na.rm = TRUE)) %>%
+  ggplot(aes(x = as.factor(month), y = med_arr_delay, color = origin)) +
+  geom_point() + 
+  geom_line(aes(x = month, y = med_arr_delay)) +
+  facet_wrap(~carrier, scales = "free_y") +
+  # theme(legend.position="none") +
+  xlab("Month") + ylab("Median Arrival Delay")
+
+# origin median arrival delay by month and carrier
+flights %>%
+  group_by(carrier, month, origin) %>%
+  summarise(med_arr_delay = median(arr_delay, na.rm = TRUE)) %>%
+  ggplot(aes(x = as.factor(month), y = med_arr_delay, color = carrier)) +
+  geom_point() + 
+  geom_line(aes(x = month, y = med_arr_delay)) +
+  facet_wrap(~origin, ncol = 1) +
+  xlab("Month") + ylab("Median Arrival Delay")
+           
 
 ```
 
@@ -406,11 +413,18 @@ The following is a data dictionary of the variables used
 
 age_gaps <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-14/age_gaps.csv')
 
+# what's the breakdown of age differences?
+age_gaps %>%
+  ggplot(aes(x = age_difference)) +
+  geom_histogram() + 
+  stat_bin(bins = 4)
+# vast majority are <25 years
+
+# let's look at how age difference has changed over time
 age_gaps %>%
   ggplot(aes(x = release_year, y = age_difference, color = character_2_gender)) +
   geom_point(alpha = 0.2) +
   geom_smooth(method = lm)
-
 # I am a bit surprised that there isn't more correlation between release year and age_diff
 # I am not surprised that female characters are more likely to be younger
 
@@ -419,10 +433,42 @@ halfrule <- age_gaps %>%
   mutate(minage = ((actor_1_age / 2) + 7),
          maxage = ((actor_1_age - 7) * 2),
          acceptable = ifelse(actor_2_age > minage, TRUE, FALSE)) %>%
-  ggplot(aes(x = character_1_gender, y = actor_1_age, color = acceptable)) +
-  geom_boxplot()
+  ggplot(aes(x = character_1_gender, fill = acceptable)) +
+  geom_bar()
 halfrule
-# 
+# if the older character is a woman, it's much more likely to be acceptable
+
+
+# which movie has the largest number of love interests and what are the gaps?
+age_gaps %>%
+  filter(couple_number == max(couple_number))
+
+age_gaps %>%
+  filter(movie_name == "Love Actually") %>%
+  ggplot(aes(x = as.factor(couple_number), y = age_difference)) +
+  geom_point()
+
+
+# percent of same gender
+age_gaps %>%
+  mutate(same_sex = case_when(
+    character_1_gender == character_2_gender & character_1_gender == "woman" ~ "lesbian",
+    character_1_gender == character_2_gender & character_1_gender == "man" ~ "gay",
+    character_1_gender != character_2_gender ~ "hetero"
+  )) %>%
+  group_by(same_sex) %>%
+  summarise(no_movies = n()) %>%
+  mutate(perc_representation = no_movies / sum(no_movies)*100) 
+
+
+# change in mean age difference over time
+age_gaps %>%
+  group_by(release_year) %>%
+  summarise(mean_diff = mean(age_difference), med_diff = median(age_difference)) %>%
+  ggplot(aes(x = release_year, y = mean_diff)) +
+  geom_point() +
+  geom_smooth(method = lm)
+
 ```
 
 How would you explore this data set? Here are some ideas of tables/ graphs to help you with your analysis
@@ -438,26 +484,10 @@ $$\frac{\text{Your age}}{2} + 7 < \text{Partner Age} < (\text{Your age} - 7) * 2
 -   Is the mean/median age difference staying constant over the years (1935 - 2022)?
 -   How frequently does Hollywood depict same-gender love interests?
 
-# Deliverables
-
-There is a lot of explanatory text, comments, etc. You do not need these, so delete them and produce a stand-alone document that you could share with someone. Render the edited and completed Quarto Markdown (qmd) file as a Word document (use the "Render" button at the top of the script editor window) and upload it to Canvas. You must be commiting and pushing tour changes to your own Github repo as you go along.
-
 # Details
 
 -   Who did you collaborate with: Colby Richardson, Shashvat Somany
+
 -   Approximately how much time did you spend on this problem set: \~3hrs
+
 -   What, if anything, gave you the most trouble: Understanding the logic of the actual question in order to come up with a solution (I had to think way too long about how to calculate a proportion)
-
-**Please seek out help when you need it,** and remember the [15-minute rule](https://mam2022.netlify.app/syllabus/#the-15-minute-rule){target="_blank"}. You know enough R (and have enough examples of code from class and your readings) to be able to do this. If you get stuck, ask for help from others, post a question on Slack-- and remember that I am here to help too!
-
-> As a true test to yourself, do you understand the code you submitted and are you able to explain it to someone else?
->
-> *Not entirely, but that's true of every piece of code I've written. But for the most part, I do believe I can replicate it.*
-
-# Rubric
-
-13/13: Problem set is 100% completed. Every question was attempted and answered, and most answers are correct. Code is well-documented (both self-documented and with additional comments as necessary). Used tidyverse, instead of base R. Graphs and tables are properly labelled. Analysis is clear and easy to follow, either because graphs are labeled clearly or you've written additional text to describe how you interpret the output. Multiple Github commits. Work is exceptional. I will not assign these often.
-
-8/13: Problem set is 60--80% complete and most answers are correct. This is the expected level of performance. Solid effort. Hits all the elements. No clear mistakes. Easy to follow (both the code and the output). A few Github commits.
-
-5/13: Problem set is less than 60% complete and/or most answers are incorrect. This indicates that you need to improve next time. I will hopefully not assign these often. Displays minimal effort. Doesn't complete all components. Code is poorly written and not documented. Uses the same type of plot for each graph, or doesn't use plots appropriate for the variables being analyzed. No Github commits.
