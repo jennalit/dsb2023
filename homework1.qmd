@@ -11,6 +11,9 @@ format:
 editor: visual
 ---
 
+<https://github.com/jennalit/dsb2023_jt/blob/7560f3a57699ffd180a81e969c193944cdeeed7d/homework1.qmd>
+---
+
 ```{r}
 #| label: load-libraries
 #| echo: false # This option disables the printing of code (only output is displayed).
@@ -447,6 +450,7 @@ age_gaps %>%
   filter(movie_name == "Love Actually") %>%
   ggplot(aes(x = as.factor(couple_number), y = age_difference)) +
   geom_point()
+# the less significant the couple, the lower the age difference
 
 
 # percent of same gender
