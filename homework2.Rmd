@@ -207,7 +207,8 @@ mass_shootings %>%
   summarise(fatalities = sum(fatalities), shootings = n()) %>%
   filter(race %in% c("BLACK","WHITE","LATINO")) %>%
   ggplot(aes(x = race, y = fatalities, color = race)) +
-  geom_boxplot()
+  geom_boxplot() +
+  ggthemes::theme_few()
 
 # white shooters have a much higher amount of fatalities than black or latino shooters
 
@@ -219,7 +220,19 @@ mass_shootings %>%
 
 ```{r}
 
+mass_shootings %>%
+  # clean up values
+  mutate(race = toupper(replace(race, race == "-","Other")),
+         prior_signs_mental_health_issues = toupper(replace(prior_signs_mental_health_issues,
+                                                            prior_signs_mental_health_issues %in% c("-","TBD"),"Unclear"))) %>%
+  group_by(prior_signs_mental_health_issues, year) %>%
+  summarise(fatalities = sum(fatalities), injured = sum(injured), total_victims = sum(total_victims),count = n()) %>%
+  ggplot(aes(x = fatalities, y = injured, color = prior_signs_mental_health_issues)) +
+  geom_point() +
+  facet_wrap(~prior_signs_mental_health_issues, scales = "free_y") +
+  ggthemes::theme_few()
 
+# there are likely to be fewer fatalities when the shooter doesn't have any prior signs of mental issues
 
 ```
 
