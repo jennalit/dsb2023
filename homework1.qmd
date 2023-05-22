@@ -11,8 +11,7 @@ format:
 editor: visual
 ---
 
-<https://github.com/jennalit/dsb2023_jt/blob/7560f3a57699ffd180a81e969c193944cdeeed7d/homework1.qmd>
----
+## <https://github.com/jennalit/dsb2023_jt/blob/7560f3a57699ffd180a81e969c193944cdeeed7d/homework1.qmd>
 
 ```{r}
 #| label: load-libraries
@@ -397,7 +396,7 @@ The age gaps dataset includes "gender" columns, which always contain the values 
 The following is a data dictionary of the variables used
 
 | variable            | class     | description                                                                                             |
-|:--------------|:--------------|:------------------------------------------|
+|:--------------------|:----------|:--------------------------------------------------------------------------------------------------------|
 | movie_name          | character | Name of the film                                                                                        |
 | release_year        | integer   | Release year                                                                                            |
 | director            | character | Director of the film                                                                                    |
