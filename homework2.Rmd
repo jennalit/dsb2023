@@ -240,6 +240,25 @@ mass_shootings %>%
 
 ```{r}
 
+mass_shootings %>%
+  mutate_all(~gsub("\n","",.)) %>%
+  mutate(race = toupper(replace(race, race == "-","Other")),
+         prior_signs_mental_health_issues = toupper(replace(prior_signs_mental_health_issues,
+                                                            prior_signs_mental_health_issues %in% c("-","TBD"),"Unclear"))) %>%
+  group_by(mental_issues = prior_signs_mental_health_issues, 
+           location = toupper(location...8), year) %>%
+  summarise(total_victims = sum(as.numeric(total_victims)), 
+            fatalities = sum(as.numeric(fatalities)), 
+            injured = sum(as.numeric(injured)), shootings = n()) %>%
+  mutate(percent_fatal = fatalities / total_victims) %>%
+  ggplot(aes(x = year, y = percent_fatal)) +
+  geom_point(aes(size = total_victims, color = mental_issues)) +
+  facet_wrap(~location) + 
+  ggthemes::theme_few()
+
+# Religious and military shootings are always related to mental issues (either known or unclear)
+# Workplace shootings consistently have a high percent fatality rate across the years, regardless of mental issues
+
 ```
 
 Make sure to provide a couple of sentences of written interpretation of your tables/figures. Graphs and tables alone will not be sufficient to answer this question.
