@@ -15,6 +15,8 @@ output:
 ---
 ---
 
+Apologies for phoning this one in, I've had a number of interviews this week and just didn't have time to dedicate to this.
+
 ```{r}
 #| label: load-libraries
 #| echo: false # This option disables the printing of code (only output is displayed).
@@ -27,6 +29,8 @@ library(skimr)
 library(countrycode)
 library(here)
 library(RColorBrewer)
+library(lubridate)
+library(ggthemes)
 ```
 
 # Data Visualisation - Exploration
@@ -82,7 +86,8 @@ df %>%
   ggplot(aes(x = year, y = count, size = total_victims, color = fatalities)) +
   geom_point() +
   scale_color_gradient(low = "black", high = "red") +
-  ggtitle("Mass Shootings per Year")
+  ggtitle("Mass Shootings per Year") +
+  ggthemes::theme_few()
 
 rm(df)
 ```
@@ -104,7 +109,8 @@ mass_shootings %>%
   geom_bar(stat = "identity") +
   geom_text(aes(label = shooters), vjust = -0.2) +
   xlab("Race") +
-  ylab("Number of shooters")
+  ylab("Number of shooters") +
+  ggthemes::theme_few()
   
 
 ```
@@ -122,7 +128,8 @@ mass_shootings %>%
   # idk why it wasn't working, total_victim class was parsed as numeric originally
   summarise(shootings = n(), total_victims = sum(as.numeric(total_victims))) %>%
   ggplot(aes(x = location, y = total_victims)) +
-  geom_boxplot()
+  geom_boxplot() +
+  ggthemes::theme_few()
 
 ```
 
@@ -140,7 +147,8 @@ mass_shootings %>%
   # idk why it wasn't working, total_victim class was parsed as numeric originally
   summarise(shootings = n(), total_victims = sum(as.numeric(total_victims))) %>%
   ggplot(aes(x = location, y = total_victims)) +
-  geom_boxplot()
+  geom_boxplot() +
+  ggthemes::theme_few()
 
 ```
 
@@ -152,7 +160,21 @@ Address the following questions. Generate appropriate figures/tables to support 
 
 ```{r}
 
-
+mass_shootings %>%
+  # clean up values
+  mutate(race = toupper(replace(race, race == "-","Other")),
+         prior_signs_mental_health_issues = toupper(replace(prior_signs_mental_health_issues,
+                                                            prior_signs_mental_health_issues %in% c("-","TBD"),"Unclear"))) %>%
+  filter(year > 2000) %>%
+  filter(race == "WHITE") %>%
+  filter(type == "Mass") %>%
+  # remove non-males
+  filter(!grepl("F",gender)) %>%
+  group_by(year,prior_signs_mental_health_issues) %>%
+  summarise(count = n()) %>%
+  ggplot(aes(y = count, x = prior_signs_mental_health_issues)) +
+    geom_bar(stat = "identity") +
+  ggthemes::theme_few()
 
 ```
 
@@ -160,11 +182,34 @@ Address the following questions. Generate appropriate figures/tables to support 
 
 ```{r}
 
+mass_shootings %>%
+  mutate(month = month(as.Date(mass_shootings$date, "%m/%d/%y"))) %>%
+  filter(type == "Mass") %>%
+  group_by(month) %>%
+  summarise(shootings = n()) %>%
+  ggplot(aes(x = as.factor(month), y = shootings)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = shootings), vjust = -0.2) +
+  xlab("Month") +
+  ylab("Number of shootings") +
+  ggthemes::theme_few()
+# June has the most mass shootings
+
 ```
 
 -   How does the distribution of mass shooting fatalities differ between White and Black shooters? What about White and Latino shooters?
 
 ```{r}
+
+mass_shootings %>%
+  mutate(race = toupper(replace(race, race == "-","Other"))) %>%
+  group_by(race,year) %>%
+  summarise(fatalities = sum(fatalities), shootings = n()) %>%
+  filter(race %in% c("BLACK","WHITE","LATINO")) %>%
+  ggplot(aes(x = race, y = fatalities, color = race)) +
+  geom_boxplot()
+
+# white shooters have a much higher amount of fatalities than black or latino shooters
 
 ```
 
@@ -173,6 +218,8 @@ Address the following questions. Generate appropriate figures/tables to support 
 -   Are mass shootings with shooters suffering from mental illness different from mass shootings with no signs of mental illness in the shooter?
 
 ```{r}
+
+
 
 ```
 
