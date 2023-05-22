@@ -1,6 +1,6 @@
 ---
 title: "Homework 2"
-author: "Your name goes here"
+author: "Jenna Thomas"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -26,6 +26,7 @@ library(wbstats)
 library(skimr)
 library(countrycode)
 library(here)
+library(RColorBrewer)
 ```
 
 # Data Visualisation - Exploration
@@ -44,7 +45,7 @@ In July 2012, in the aftermath of a mass shooting in a movie theater in Aurora, 
 #| warning: false
 
 
-mass_shootings <- read_csv(here::here("data", "mass_shootings.csv"))
+mass_shootings <- read_csv("hw2_mass_shootings.csv")
 
 glimpse(mass_shootings)
 ```
@@ -71,12 +72,40 @@ glimpse(mass_shootings)
 -   Generate a data frame that summarizes the number of mass shootings per year.
 
 ```{r}
+# summarise the number of mass shootings per year 
+df <- mass_shootings %>%
+  group_by(year) %>%
+  summarise(fatalities = sum(fatalities), injured = sum(injured), total_victims = sum(total_victims),count = n())
 
+# visualize summary data
+df %>%
+  ggplot(aes(x = year, y = count, size = total_victims, color = fatalities)) +
+  geom_point() +
+  scale_color_gradient(low = "black", high = "red") +
+  ggtitle("Mass Shootings per Year")
+
+rm(df)
 ```
 
 -   Generate a bar chart that identifies the number of mass shooters associated with each race category. The bars should be sorted from highest to lowest and each bar should show its number.
 
 ```{r}
+
+mass_shootings %>%
+  # consolidate variables 
+  mutate(race = replace(race, race == "-","Other")) %>%
+  filter(type == "Mass") %>%
+  # make case insensitive before grouping
+  group_by(toupper(race)) %>%
+  summarise(n()) %>%
+  # clean names
+  rename(race = 'toupper(race)', shooters = 'n()') %>%
+  ggplot(aes(x = reorder(race,-shooters), y = shooters)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = shooters), vjust = -0.2) +
+  xlab("Race") +
+  ylab("Number of shooters")
+  
 
 ```
 
@@ -84,11 +113,34 @@ glimpse(mass_shootings)
 
 ```{r}
 
+
+mass_shootings %>%
+  # clean names [though I think there must be a better way]
+  mutate_all(~gsub("\n","",.)) %>%
+  # make case insensitive for consolidation
+  group_by(location = toupper(location...8),year) %>%
+  # idk why it wasn't working, total_victim class was parsed as numeric originally
+  summarise(shootings = n(), total_victims = sum(as.numeric(total_victims))) %>%
+  ggplot(aes(x = location, y = total_victims)) +
+  geom_boxplot()
+
 ```
 
 -   Redraw the same plot, but remove the Las Vegas Strip massacre from the dataset.
 
 ```{r}
+
+mass_shootings %>%
+  # filter out LV
+  filter(!grepl("Las Vegas Strip",case)) %>%
+  # clean names [though I think there must be a better way]
+  mutate_all(~gsub("\n","",.)) %>%
+  # make case insensitive for consolidation
+  group_by(location = toupper(location...8),year) %>%
+  # idk why it wasn't working, total_victim class was parsed as numeric originally
+  summarise(shootings = n(), total_victims = sum(as.numeric(total_victims))) %>%
+  ggplot(aes(x = location, y = total_victims)) +
+  geom_boxplot()
 
 ```
 
@@ -99,6 +151,8 @@ Address the following questions. Generate appropriate figures/tables to support 
 -   How many white males with prior signs of mental illness initiated a mass shooting after 2000?
 
 ```{r}
+
+
 
 ```
 
