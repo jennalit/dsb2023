@@ -280,7 +280,7 @@ The dataset is too large to be hosted on Canvas or Github, so please download it
 #| message: false
 #| warning: false
 
-card_fraud <- read_csv(here::here("data", "card_fraud.csv"))
+card_fraud <- read_csv("hw2_card_fraud.csv")
 
 glimpse(card_fraud)
 ```
