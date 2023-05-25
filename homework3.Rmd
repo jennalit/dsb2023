@@ -118,6 +118,25 @@ payments %>%
 
 ```{r}
 
+payments %>%
+  left_join(members, by = c("member_id" = "id")) %>%
+  # count distinct entities
+  mutate(total_entities = n_distinct(entity)) %>%
+  # add total donations by that entity
+  add_count(entity, name = "donations") %>%
+  group_by(entity, party_id, donations, total_entities) %>% 
+  # split out donations by party
+  summarise(value = sum(value), donations_by_party = n()) %>%
+  # calculate % of entity's donations to a party
+  mutate(percent_to_party = donations_by_party / donations) %>%
+  # sanity check
+  arrange((percent_to_party)) %>%
+  # filter for entities who only donated to a single party
+  filter(percent_to_party == 1) %>%
+  # now count unique of the singles
+  group_by(.)
+  
+  
 ```
 
 
