@@ -1,6 +1,6 @@
 ---
 title: "Homework 3: Databases, web scraping, and a basic Shiny app"
-author: "Your name goes here"
+author: "Jenna Thomas"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -54,24 +54,62 @@ The database made available by Simon Willison is an `SQLite` database
 ```{r}
 sky_westminster <- DBI::dbConnect(
   drv = RSQLite::SQLite(),
-  dbname = here::here("data", "sky-westminster-files.db")
+  dbname = ("sky-westminster-files.db")
 )
 ```
 
 How many tables does the database have?
-
 ```{r}
 DBI::dbListTables(sky_westminster)
+
+# 7 tables
 ```
 
 ## Which MP has received the most amount of money? 
 
 You need to work with the `payments` and `members` tables and for now we just want the total among all years. To insert a new, blank chunk of code where you can write your beautiful code (and comments!), please use the following shortcut: `Ctrl + Alt + I` (Windows) or `cmd + option + I` (mac)
+```{r}
+
+payments <- dbReadTable(sky_westminster, "payments", payments)
+members <- dbReadTable(sky_westminster, "members", members)
+
+payments %>%
+  left_join(members, by = c("member_id" = "id")) %>%
+  group_by(name) %>%
+  summarise(total = sum(value)) %>%
+  slice(which.max(total)) 
+
+# Theresa May has received £2.8m
+
+```
 
 
 ## Any `entity` that accounts for more than 5% of all donations?
 
 Is there any `entity` whose donations account for more than 5% of the total payments given to MPs over the 2020-2022 interval? Who are they and who did they give money to?
+
+```{r}
+
+payments %>%
+  left_join(members, by = c("member_id" = "id")) %>%
+  group_by(entity) %>%
+  summarise(total = sum(value)) %>%
+  mutate(percent_total = total / sum(total)) %>%
+  filter(percent_total > 0.05) 
+
+# Withers LLP has donated 5.3% of the total (£1.8m)
+
+payments %>%
+  left_join(members, by = c("member_id" = "id")) %>%
+  filter(entity == "Withers LLP") %>%
+  group_by(name) %>%
+  summarise(total = sum(value))
+
+# The entire amount was to Sir Geoffrey Cox
+  
+
+```
+
 
 ## Do `entity` donors give to a single party or not?
 
