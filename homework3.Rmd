@@ -73,6 +73,7 @@ You need to work with the `payments` and `members` tables and for now we just wa
 payments <- dbReadTable(sky_westminster, "payments", payments)
 members <- dbReadTable(sky_westminster, "members", members)
 
+
 payments %>%
   left_join(members, by = c("member_id" = "id")) %>%
   group_by(name) %>%
@@ -142,7 +143,6 @@ payments %>%
 ```
 
 
-
 ## Which party has raised the greatest amount of money in each of the years 2020-2022? 
 
 I would like you to write code that generates the following table. 
@@ -151,8 +151,43 @@ I would like you to write code that generates the following table.
 knitr::include_graphics(here::here("images", "total_donations_table.png"), error = FALSE)
 ```
 
+```{r}
+
+parties <- dbReadTable(sky_westminster, "parties", parties)
+party_donations <- dbReadTable(sky_westminster, "party_donations", party_donations)
+
+party_donations %>%
+  left_join(parties, by = c("party_id" = "id")) %>%
+  mutate(date = as.Date(date,'%Y-%m-%d'),
+         year = as.numeric(format(date,'%Y'))) %>%
+  group_by(year, name = entity) %>%
+  summarise(total_year_donations = sum(value)) %>%
+  group_by(year) %>%
+  slice_max(total_year_donations, n=10)
+
+# I don't know what the proportion is in that table
+  
+
+```
+
 
 ... and then, based on this data, plot the following graph. 
+
+```{r}
+
+party_donations %>%
+  left_join(parties, by = c("party_id" = "id")) %>%
+  mutate(date = as.Date(date,'%Y-%m-%d'),
+         year = as.numeric(format(date,'%Y'))) %>%
+  group_by(year, name) %>%
+  summarise(total_year_donations = sum(value)) %>%
+  slice_max(total_year_donations, n=10) %>% 
+  ggplot(aes(x = reorder(year,-total_year_donations), y = total_year_donations, fill = name)) +
+  geom_bar(stat = "identity",position=position_dodge())
+
+# I'm not sure how to reorder the bars here
+
+```
 
 ```{r echo=FALSE, out.width="80%"}
 knitr::include_graphics(here::here("images", "total_donations_graph.png"), error = FALSE)
@@ -164,6 +199,8 @@ Finally, when you are done working with the databse, make sure you close the con
 
 ```{r}
 dbDisconnect(sky_westminster)
+rm(list = ls())
+
 ```
 
 
