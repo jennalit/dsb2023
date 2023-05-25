@@ -116,6 +116,11 @@ payments %>%
 - How many distinct entities who paid money to MPS are there?
 - How many (as a number and %) donated to MPs belonging to a single party only?
 
+```{r}
+
+```
+
+
 
 ## Which party has raised the greatest amount of money in each of the years 2020-2022? 
 
