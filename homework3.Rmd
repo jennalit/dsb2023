@@ -132,11 +132,13 @@ payments %>%
   # sanity check
   arrange((percent_to_party)) %>%
   # filter for entities who only donated to a single party
-  filter(percent_to_party == 1) %>%
-  # now count unique of the singles
-  group_by(.)
+  filter(percent_to_party == 1) 
   
-  
+# 2213 total distinct entities
+# 2036 distinct entities only donated to one party
+# 92% of entities only donate to a one party
+
+
 ```
 
 
