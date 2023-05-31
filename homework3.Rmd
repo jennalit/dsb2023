@@ -387,8 +387,53 @@ base_url <- "https://www.consultancy.uk/jobs/page/1"
 url <- str_c(base_url, page)
 ```
 
--   Construct a vector called `pages` that contains the numbers for each page available
+```{r}
 
+get_page <- function(pagenumber) {
+ 
+  base_url <- "https://www.consultancy.uk/jobs/page/"
+  url <- str_c(base_url, pagenumber)
+  address <- read_html(url)
+ 
+  jobs <- address %>%
+    html_nodes(".title") %>%
+    html_text()
+ 
+  firm <- address %>%
+    html_nodes(".hide-phone .row-link") %>%
+    html_text()
+ 
+  functional_area <- address %>%
+    html_nodes(".initial") %>%
+    html_text2()
+ 
+  type  <- address %>%
+    html_nodes(".hide-tablet-landscape .row-link") %>%
+    html_text2()
+ 
+  jobs_df <- tibble(
+    jobs = jobs,
+     firm = firm,
+     functional_area = functional_area,
+     type = type,
+    page = pagenumber
+  )
+  return(jobs_df)
+}
+
+get_page(url)
+
+base_url <- "https://www.consultancy.uk/jobs/page/"
+
+pages <-  1:8
+
+
+alljobs <- map_df(pages, get_page)
+
+```
+
+
+-   Construct a vector called `pages` that contains the numbers for each page available
 
 -   Map the `scrape_jobs()` function over `pages` in a way that will result in a data frame called `all_consulting_jobs`.
 
@@ -408,14 +453,13 @@ knitr::include_graphics(here::here("images", "electricity-shiny.png"), error = F
 You can use chatGPT to get the basic layout of Shiny app, but you need to adjust the code it gives you. Ask chatGPT to create the Shiny app using the `gapminder` data and make up similar requests for the inputs/outpus you are thinking of deploying.
 
 
-
 # Deliverables
 
 There is a lot of explanatory text, comments, etc. You do not need these, so delete them and produce a stand-alone document that you could share with someone. Knit the edited and completed R Markdown (Rmd) file as a Word or HTML document (use the "Knit" button at the top of the script editor window) and upload it to Canvas. You must be commiting and pushing your changes to your own Github repo as you go along.
 
 # Details
 
--   Who did you collaborate with: TYPE NAMES HERE
+-   Who did you collaborate with: Jamie McGraw, Saagar
 -   Approximately how much time did you spend on this problem set: ANSWER HERE
 -   What, if anything, gave you the most trouble: ANSWER HERE
 
