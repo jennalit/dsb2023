@@ -355,6 +355,7 @@ The website [https://www.consultancy.uk/jobs/](https://www.consultancy.uk/jobs) 
 #| eval: false
 
 library(robotstxt)
+
 paths_allowed("https://www.consultancy.uk") #is it ok to scrape?
 
 base_url <- "https://www.consultancy.uk/jobs/page/1"
@@ -371,20 +372,6 @@ Identify the CSS selectors in order to extract the relevant information from thi
 1. functional area
 1. type
 
-Can you get all pages of ads, and not just the first one, `https://www.consultancy.uk/jobs/page/1` into a dataframe?
-
-
--   Write a function called `scrape_jobs()` that scrapes information from the webpage for consulting positions. This function should
-
-    -   have one input: the URL of the webpage and should return a data frame with four columns (variables): job, firm, functional area, and type
-
-    -   Test your function works with other pages too, e.g., https://www.consultancy.uk/jobs/page/2. Does the function seem to do what you expected it to do?
-
-    -   Given that you have to scrape `...jobs/page/1`, `...jobs/page/2`, etc., define your URL so you can join multiple stings into one string, using `str_c()`. For instnace, if `page` is 5, what do you expect the following code to produce?
-    
-```
-base_url <- "https://www.consultancy.uk/jobs/page/1"
-url <- str_c(base_url, page)
 ```
 
 ```{r}
@@ -427,18 +414,11 @@ base_url <- "https://www.consultancy.uk/jobs/page/"
 
 pages <-  1:8
 
+all_consulting_jobs <- map_df(pages, get_page)
 
-alljobs <- map_df(pages, get_page)
+write_csv(all_consulting_jobs, "all_consulting_jobs.csv")
 
 ```
-
-
--   Construct a vector called `pages` that contains the numbers for each page available
-
--   Map the `scrape_jobs()` function over `pages` in a way that will result in a data frame called `all_consulting_jobs`.
-
--   Write the data frame to a csv file called `all_consulting_jobs.csv` in the `data` folder.
-
 
 
 # Create a shiny app 
@@ -450,27 +430,10 @@ You have to create a simple Shiny app, where a user chooses a country from a dro
 knitr::include_graphics(here::here("images", "electricity-shiny.png"), error = FALSE)
 ```
 
-You can use chatGPT to get the basic layout of Shiny app, but you need to adjust the code it gives you. Ask chatGPT to create the Shiny app using the `gapminder` data and make up similar requests for the inputs/outpus you are thinking of deploying.
 
-
-# Deliverables
-
-There is a lot of explanatory text, comments, etc. You do not need these, so delete them and produce a stand-alone document that you could share with someone. Knit the edited and completed R Markdown (Rmd) file as a Word or HTML document (use the "Knit" button at the top of the script editor window) and upload it to Canvas. You must be commiting and pushing your changes to your own Github repo as you go along.
 
 # Details
 
--   Who did you collaborate with: Jamie McGraw, Saagar
--   Approximately how much time did you spend on this problem set: ANSWER HERE
--   What, if anything, gave you the most trouble: ANSWER HERE
-
-**Please seek out help when you need it,** and remember the [15-minute rule](https://dsb2023.netlify.app/syllabus/#the-15-minute-rule){target="_blank"}. You know enough R (and have enough examples of code from class and your readings) to be able to do this. If you get stuck, ask for help from others, post a question on Slack-- and remember that I am here to help too!
-
-> As a true test to yourself, do you understand the code you submitted and are you able to explain it to someone else?
-
-# Rubric
-
-13/13: Problem set is 100% completed. Every question was attempted and answered, and most answers are correct. Code is well-documented (both self-documented and with additional comments as necessary). Used tidyverse, instead of base R. Graphs and tables are properly labelled. Analysis is clear and easy to follow, either because graphs are labeled clearly or you've written additional text to describe how you interpret the output. Multiple Github commits. Work is exceptional. I will not assign these often.
-
-8/13: Problem set is 60--80% complete and most answers are correct. This is the expected level of performance. Solid effort. Hits all the elements. No clear mistakes. Easy to follow (both the code and the output). A few Github commits.
-
-5/13: Problem set is less than 60% complete and/or most answers are incorrect. This indicates that you need to improve next time. I will hopefully not assign these often. Displays minimal effort. Doesn't complete all components. Code is poorly written and not documented. Uses the same type of plot for each graph, or doesn't use plots appropriate for the variables being analyzed. No Github commits.
+-   Who did you collaborate with: Jamie, Saagar, Vaani
+-   Approximately how much time did you spend on this problem set: 5 hours
+-   What, if anything, gave you the most trouble: I still don't understand how scraping works
