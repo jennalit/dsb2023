@@ -606,7 +606,7 @@ If you're using a recipe within a tidymodels workflow, you do not need to additi
 
 # Model Comparison
 
-```{r}
+```{r, error = TRUE}
 
 ## Evaluate Models
 
@@ -644,14 +644,14 @@ log_pred %>%
 
 log_pred %>% 
   conf_mat(test, .pred_class) %>% 
-  autoplot(type = "heatmap")
+  autoplot(type = "heatmap") 
 
 
 ## ROC Curve
 
 log_pred %>% 
   group_by(id) %>% # id contains our folds
-  roc_curve(test, .pred_above) %>% 
+  roc_curve(test, .pred_Pass) %>% 
   autoplot()
 
 
@@ -814,7 +814,7 @@ last_fit_xgb %>%
 ## Final ROC curve
 last_fit_xgb %>% 
   collect_predictions() %>% 
-  roc_curve(test, .pred_above) %>% 
+  roc_curve(test, .pred_Pass) %>% 
   autoplot()
 
 
@@ -823,8 +823,8 @@ last_fit_xgb %>%
 # Details
 
 -   Who did you collaborate with: Colby, Saagar
--   Approximately how much time did you spend on this problem set: ANSWER HERE
--   What, if anything, gave you the most trouble: ANSWER HERE
+-   Approximately how much time did you spend on this problem set: 2 hours
+-   What, if anything, gave you the most trouble: It was hard to diagnose where the fail points were
 
 **Please seek out help when you need it,** and remember the [15-minute rule](https://dsb2023.netlify.app/syllabus/#the-15-minute-rule){target="_blank"}. You know enough R (and have enough examples of code from class and your readings) to be able to do this. If you get stuck, ask for help from others, post a question on Slack-- and remember that I am here to help too!
 
