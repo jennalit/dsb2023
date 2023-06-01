@@ -155,6 +155,7 @@ bechdel %>%
   ggpairs(aes(colour=test), alpha=0.2)+
   theme_bw()
 
+# On average, movies that fail the test do better in IMDB ratings. 
 
 ```
 
@@ -243,6 +244,7 @@ lr_preds <- lr_fit %>%
 ### Confusion matrix
 
 ```{r}
+
 lr_preds %>% 
   conf_mat(truth = test, estimate = .pred_class) %>% 
   autoplot(type = "heatmap")
@@ -253,22 +255,25 @@ lr_preds %>%
 ## Decision Tree
 
 ```{r}
+
 tree_preds <- tree_fit %>%
   augment(new_data = bechdel) %>%
   mutate(.pred_match = if_else(test == .pred_class, 1, 0)) 
 
-
 ```
 
 ```{r}
+
 tree_preds %>% 
   conf_mat(truth = test, estimate = .pred_class) %>% 
   autoplot(type = "heatmap")
+
 ```
 
 ## Draw the decision tree
 
 ```{r}
+
 draw_tree <- 
     rpart::rpart(
         test ~ metascore + imdb_rating,
@@ -290,13 +295,19 @@ bechdel_folds <- vfold_cv(data = bechdel_train,
                           v = 10, 
                           strata = test)
 bechdel_folds
+
+# This script is setting the seed (to make the results reproducible), then using the vfold_cv function to create 10-fold cross-validation splits of the bechdel_train dataset. The vfold_cv function splits a dataset into a number of folds (10 in this case) for cross-validation, and the strata argument is used to specify a variable that should be used to conduct stratified sampling (which is a way of sampling that takes into account the distribution of classes or categories within a variable). So the function is trying to return a rsplit object containing 10 resamples of the bechdel_train data, where each resample has been stratified by the test variable. Each resample in the object includes a training set and a testing set.
+
+
 ```
+
 
 ## `fit_resamples()`
 
 Trains and tests a resampled model.
 
 ```{r}
+
 lr_fit <- lr_mod %>%
   fit_resamples(
     test ~ metascore + imdb_rating,
@@ -309,6 +320,7 @@ tree_fit <- tree_mod %>%
     test ~ metascore + imdb_rating,
     resamples = bechdel_folds
   )
+
 ```
 
 ## `collect_metrics()`
@@ -324,6 +336,7 @@ collect_metrics(tree_fit)
 ```
 
 ```{r}
+
 tree_preds <- tree_mod %>% 
   fit_resamples(
     test ~ metascore + imdb_rating, 
@@ -368,8 +381,13 @@ Do we have any `genre` with few observations? Assign genres that have less than 
 ```{r}
 #| echo = FALSE
 bechdel %>% 
-  count(genre) %>% 
-  mutate(genre = fct_reorder(genre, n)) %>% 
+  count(genre) %>%
+  # assign genres that have less than 3% to other category
+  mutate(genre = case_when(n/sum(n) < 0.03 ~ "Other",
+                           .default = genre)) %>%
+  group_by(genre) %>%
+  summarise(n = sum(n)) %>%
+  mutate(genre = fct_reorder(genre, n)) %>%
   ggplot(aes(x = genre, 
              y = n)) +
   geom_col(alpha = .8) +
@@ -377,6 +395,7 @@ bechdel %>%
   labs(x = NULL) +
   geom_hline(yintercept = (nrow(bechdel_train)*.03), lty = 3)+
   theme_light()
+
 ```
 
 ```{r}
@@ -384,7 +403,7 @@ movie_rec <-
   recipe(test ~ .,
          data = bechdel_train) %>%
   
-  # Genres with less than 5% will be in a catewgory 'Other'
+  # Genres with less than 5% will be in a category 'Other'
     step_other(genre, threshold = .03) 
 ```
 
