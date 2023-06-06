@@ -16,7 +16,7 @@ params:
     address:
       - city: London
         country: UK
-        street: Pearson Square
+        street: 
         title: Address
     buttonClear: Clear
     buttonSend: Send message
