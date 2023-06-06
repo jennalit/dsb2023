@@ -85,18 +85,18 @@ params:
       #  subtitle: Flights
        # title: Homework 1
         #url: assignments/1
-      - image: lbs.jpg
+      - image: creditcardfraud.jpg
         subtitle: Mass shootings & credit card fraud
         title: Homework 2
         url: assignments/hw2
-      - image: lbs.jpg
+      - image: db.jpg
         subtitle: Databases, web scraping, and a basic Shiny app
         title: Homework 3
         url: assignments/hw3
-      - image: lbs.jpg
+      - image: ml.jpg
         subtitle: Machine learning
         title: Homework 4
-        url: assignments/4
+        url: assignments/hw4
     #  - image: pic05.jpg
      #   subtitle: Ipsum Dolor Sit Amet
       #  title: Consequat

@@ -5,7 +5,7 @@ categories:
 date: "`r Sys.Date()`"
 description: Homework 3 # the title that will show up once someone gets to this page
 draft: false
-image: cardfraud.jpg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
+image: db.jpg # save picture in \static\img\blogs. Acceptable formats= jpg, jpeg, or png . Your iPhone pics wont work
 
 keywords: ""
 slug: hw3 # slug is the shorthand URL address... no spaces plz
