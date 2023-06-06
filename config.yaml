@@ -84,19 +84,19 @@ params:
       - image: lbs.jpg
         subtitle: Flights
         title: Homework 1
-        url: https://github.com/jennalit/dsb2023_jt/blob/99b71f016add51b33a689fda9e0d3177aab9d076/homework1.qmd
+        url: assignments/1
       - image: lbs.jpg
         subtitle: Mass shootings & credit card fraud
         title: Homework 2
-        url: https://github.com/jennalit/dsb2023_jt/blob/99b71f016add51b33a689fda9e0d3177aab9d076/homework2.Rmd
+        url: assignments/2
       - image: lbs.jpg
         subtitle: Databases, web scraping, and a basic Shiny app
         title: Homework 3
-        url: https://github.com/jennalit/dsb2023_jt/blob/99b71f016add51b33a689fda9e0d3177aab9d076/homework3.Rmd
+        url: assignments/3
       - image: lbs.jpg
         subtitle: Machine learning
         title: Homework 4
-        url: https://github.com/jennalit/dsb2023_jt/blob/99b71f016add51b33a689fda9e0d3177aab9d076/homework4.Rmd
+        url: assignments/4
     #  - image: pic05.jpg
      #   subtitle: Ipsum Dolor Sit Amet
       #  title: Consequat
