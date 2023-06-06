@@ -6,7 +6,7 @@ googleAnalytics: ''
 disqusShortname: ''
 params:
   banner:
-    buttonText: Get Started
+    buttonText: Assignments
     subtitle: |-
       This is my website aka final individual assignment for the LBS DSB course.
 
@@ -60,9 +60,9 @@ params:
   image: ''
   name: Jenna Thomas
   navigation:
-    button1:
-      - name: Get Started
-        url: blogs
+  #  button1:
+   #   - name: Get Started
+    #    url: blogs
     #button2:
     #  - name: Log In
     #    url: '#'
@@ -77,7 +77,7 @@ params:
     #    url: elements.html
     menu: Menu
     subtitle: 
-    title: --
+    title: Home
   tiles:
     enable: yes
     showcase:
@@ -97,20 +97,20 @@ params:
         subtitle: Machine learning
         title: Homework 4
         url: https://github.com/jennalit/dsb2023_jt/blob/99b71f016add51b33a689fda9e0d3177aab9d076/homework4.Rmd
-      - image: pic05.jpg
-        subtitle: Ipsum Dolor Sit Amet
-        title: Consequat
-        url: blogs/ipsum
-      - image: pic06.jpg
-        subtitle: Feugiat Amet Tempus
-        title: Etiam
-        url: blogs/ipsum
+    #  - image: pic05.jpg
+     #   subtitle: Ipsum Dolor Sit Amet
+      #  title: Consequat
+       # url: blogs/ipsum
+    #  - image: pic06.jpg
+     #   subtitle: Feugiat Amet Tempus
+      #  title: Etiam
+       # url: blogs/ipsum
   two:
-  #  buttonText: Get Started
+    buttonText: Back to top
     enable: yes
     subtitle: "Data science refers to methods and tools that enable the extraction of useful knowledge and business value from complex data collections.
       \n    Data science refers to methods and tools that enable the extraction of useful knowledge and business value from complex data collections. 
       \n    The effective application of these methods is critical for organizations and companies to make decisions and drive innovation. 
       \n    This elective expands students’ analytical toolkit in analyzing massive and complex data collections."
     title: Course summary
-    url: blogs
+    url: "#"
