@@ -1,0 +1,116 @@
+baseURL: https://kostis-portfolio.netlify.app/
+languageCode: en-us
+title: Portfolio website for Kostis Christodoulou's Data Science for Business course
+theme: forty
+googleAnalytics: ''
+disqusShortname: ''
+params:
+  banner:
+    buttonText: Get Started
+    subtitle: |-
+      This is my website aka final individual assignment for the LBS DSB course.
+
+    title: Hi, my name is Jenna. 
+  blog: {}
+  contact:
+    address:
+      - city: London
+        country: UK
+        street: Pearson Square
+        title: Address
+    buttonClear: Clear
+    buttonSend: Send message
+    email:
+      - email: jthomas.mba2023@london.edu
+        title: Email
+    enable: yes
+    phone:
+      - phone: +44 7507710750
+        title: Phone
+  custom_css: []
+  custom_js: []
+  description: Your description
+  error404:
+    heading: Page couldn't be found
+    text: Please visit [this page](/)
+  favicon: favicon.ico
+  footer:
+    copyright: Company Name
+    enable: yes
+    quicklinks:
+      - alt: HTML5 UP
+        text: 'Design: '
+        url: https://www.html5up.net
+    social:
+    #  - icon: fa-twitter
+    #    label: Twitter
+    #    url: https://www.twitter.com
+    #  - icon: fa-facebook
+    #    label: Facebook
+    #    url: https://www.facebook.com
+    #  - icon: fa-instagram
+    #    label: Instagram
+    #    url: https://www.instagram.com
+      - icon: fa-github
+        label: GitHub
+        url: https://github.com/jennalit/dsb2023_jt
+      - icon: fa-linkedin
+        label: LinkedIn
+        url: https://www.linkedin.com/in/jenna-thomas/
+  image: ''
+  name: Jenna Thomas
+  navigation:
+    button1:
+      - name: Get Started
+        url: blogs
+    #button2:
+    #  - name: Log In
+    #    url: '#'
+    links:
+      - name: Home
+        url: '#'
+      - name: Assignments
+        url: assignments
+    #  - name: Generic Blog
+    #    url: blogs/ipsum
+    #  - name: Elements
+    #    url: elements.html
+    menu: Menu
+    subtitle: 
+    title: --
+  tiles:
+    enable: yes
+    showcase:
+      - image: lbs.jpg
+        subtitle: Flights
+        title: Homework 1
+        url: https://github.com/jennalit/dsb2023_jt/blob/99b71f016add51b33a689fda9e0d3177aab9d076/homework1.qmd
+      - image: lbs.jpg
+        subtitle: Mass shootings & credit card fraud
+        title: Homework 2
+        url: https://github.com/jennalit/dsb2023_jt/blob/99b71f016add51b33a689fda9e0d3177aab9d076/homework2.Rmd
+      - image: lbs.jpg
+        subtitle: Databases, web scraping, and a basic Shiny app
+        title: Homework 3
+        url: https://github.com/jennalit/dsb2023_jt/blob/99b71f016add51b33a689fda9e0d3177aab9d076/homework3.Rmd
+      - image: lbs.jpg
+        subtitle: Machine learning
+        title: Homework 4
+        url: https://github.com/jennalit/dsb2023_jt/blob/99b71f016add51b33a689fda9e0d3177aab9d076/homework4.Rmd
+      - image: pic05.jpg
+        subtitle: Ipsum Dolor Sit Amet
+        title: Consequat
+        url: blogs/ipsum
+      - image: pic06.jpg
+        subtitle: Feugiat Amet Tempus
+        title: Etiam
+        url: blogs/ipsum
+  two:
+  #  buttonText: Get Started
+    enable: yes
+    subtitle: "Data science refers to methods and tools that enable the extraction of useful knowledge and business value from complex data collections.
+      \n    Data science refers to methods and tools that enable the extraction of useful knowledge and business value from complex data collections. 
+      \n    The effective application of these methods is critical for organizations and companies to make decisions and drive innovation. 
+      \n    This elective expands students’ analytical toolkit in analyzing massive and complex data collections."
+    title: Course summary
+    url: blogs
