@@ -92,7 +92,7 @@ params:
       - image: lbs.jpg
         subtitle: Databases, web scraping, and a basic Shiny app
         title: Homework 3
-        url: assignments/3
+        url: assignments/hw3
       - image: lbs.jpg
         subtitle: Machine learning
         title: Homework 4
