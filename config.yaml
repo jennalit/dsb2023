@@ -81,14 +81,14 @@ params:
   tiles:
     enable: yes
     showcase:
-      - image: lbs.jpg
-        subtitle: Flights
-        title: Homework 1
-        url: assignments/1
+     # - image: lbs.jpg
+      #  subtitle: Flights
+       # title: Homework 1
+        #url: assignments/1
       - image: lbs.jpg
         subtitle: Mass shootings & credit card fraud
         title: Homework 2
-        url: assignments/2
+        url: assignments/hw2
       - image: lbs.jpg
         subtitle: Databases, web scraping, and a basic Shiny app
         title: Homework 3
