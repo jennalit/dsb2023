@@ -1,6 +1,6 @@
-baseURL: https://kostis-portfolio.netlify.app/
+baseURL: https://dsb-jt-2023.netlify.app
 languageCode: en-us
-title: Portfolio website for Kostis Christodoulou's Data Science for Business course
+title: Portfolio website for JT's Data Science for Business course
 theme: forty
 googleAnalytics: ''
 disqusShortname: ''
@@ -114,3 +114,8 @@ params:
       \n    This elective expands students’ analytical toolkit in analyzing massive and complex data collections."
     title: Course summary
     url: "#"
+    
+markup: 
+  goldmark: 
+    renderer: 
+      unsafe: true    
